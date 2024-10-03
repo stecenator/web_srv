@@ -1,12 +1,6 @@
 ---
 # Główny task instalacji webserwera w na PI
 # marcin_stec@pl.ibm.com
-
-  - name: Status repozytorium
-    stat:
-      path: "{{ doc_root }}/repodata"
-    register: repo
-
   
   - name: Pakiety serwera web
     dnf:
@@ -35,6 +29,24 @@
       - "HTTPD"
       - "SEC"
 
+  - name: Podskrobanie var.server_root w lighttpd.conf
+    lineinfile:
+      path: /etc/lighttpd/lighttpd.conf
+      regexp: '^var\.server_root'
+      line: 'var.server_root = "{{ srv_root }}"'
+    tags:
+      - "HTTPD"
+
+  - name: Tworzenie {{ doc_root }}  jeśli nie istnieje
+    file:
+      path: "{{ doc_root }}"
+      state: directory
+      mode: '0700'
+      owner: "lighttpd"
+      group: "lighttpd"
+    tags:
+      - "HTTPD"
+
   - name: Wrzucanie pliku index.html
     template:
       src: index.html.j2
@@ -51,7 +63,7 @@
     tags:
       - "HTTPD"
 
-  - name: "Dodawanie polityk SELinux dla katalogu {{ doc_root}}"
+  - name: "Dodawanie polityk SELinux dla katalogu {{ doc_root }}"
     sefcontext:
       target: '{{ doc_root }}(/.*)?'
       seuser: "system_u"
