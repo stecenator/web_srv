@@ -1,0 +1,13 @@
+---
+# Zmienne roli web_srv. Siedzą w role/defaults, żeby dały się nadpisać przez hosta
+
+  web_pkgs:
+    - lighttpd
+    - curl
+
+  fw_services:
+    - http
+    - https
+
+  srv_root: "/var/www"
+  doc_root: "{{ srv_root }}/lighttpd"   # Domyślne, może być nadpisane zmienną hosta
