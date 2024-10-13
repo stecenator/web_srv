@@ -53,17 +53,48 @@
       dest: "{{ doc_root }}/index.html"
       owner: "lighttpd"
       group: "lighttpd"
+      # force: false
     tags:
       - "HTTPD"
 
-  - name: "Zezwolenie na directory browsing w {{ ba_root }}"
+  # - name: "Zezwolenie na directory browsing w {{ ba_root }}"
+  #   copy:
+  #     src: dirlisting.conf
+  #     dest: "/etc/lighttpd/conf.d/"
+  #     force: false
+  #   tags:
+  #     - "HTTPD"
+
+  - name: "Definicja publicznego katalogu"
     copy:
-      src: dirlisting.conf
-      dest: "/etc/lighttpd/conf.d/"
+      src: pub_dir.conf
+      dest: "/etc/lighttpd/conf.d/99-custom.conf"
+    tags:
+      - "HTTPD"
+  
+  - name: Tworzenie publicznego katalogu jeśli nie istnieje
+    file:
+      path: "/toys/pub"
+      state: directory
+      mode: 'u=rwx,g=rxs,o=rx'
+      owner: "lighttpd"
+      group: "ftp"
     tags:
       - "HTTPD"
 
   - name: "Dodawanie polityk SELinux dla katalogu {{ doc_root }}"
+    sefcontext:
+      target: '{{ doc_root }}(/.*)?'
+      seuser: "system_u"
+      setype: "httpd_sys_rw_content_t"
+      state: present
+    when: ansible_facts.selinux.status == 'enabled'
+    tags:
+      - "SEC"
+      - "HTTPD"
+      - "BA"
+
+  - name: "Dodawanie polityk SELinux dla katalogu publicznego"
     sefcontext:
       target: '{{ doc_root }}(/.*)?'
       seuser: "system_u"
