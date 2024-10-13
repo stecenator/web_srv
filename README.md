@@ -10,5 +10,5 @@ Ta rola służy do instalacji prostego webserwera `lighttpd`. Podstawowe założ
         **Pomysł** - a gdyby lista katalogów była listą podaną przez zmienną ? 
 
 - otwiera porty `http` i `https` w firewallu. 
-- przywraca kontekst SELinuxa (`restorecon`)
+- przywraca kontekst SELinuxa (`restorecon`) na `doc_root` serwera i katalogu publicznym 
 

@@ -11,3 +11,4 @@
 
   srv_root: "/var/www"
   doc_root: "{{ srv_root }}/lighttpd"   # Domyślne, może być nadpisane zmienną hosta
+  pub_dir: "{{ srv_root }}/pub"         # nadpisać zmienną hosta na właściwą lokalizację

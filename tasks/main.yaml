@@ -94,9 +94,9 @@
       - "HTTPD"
       - "BA"
 
-  - name: "Dodawanie polityk SELinux dla katalogu publicznego"
+  - name: "Dodawanie polityk SELinux dla katalogu publicznego {{ pub_dir }}"
     sefcontext:
-      target: '{{ doc_root }}(/.*)?'
+      target: '{{ pub_dir }}(/.*)?'
       seuser: "system_u"
       setype: "httpd_sys_rw_content_t"
       state: present
@@ -108,6 +108,14 @@
 
   - name: "Ustawianie kontekstu SELinux na {{ doc_root }}"
     command: restorecon -irv "{{ doc_root }}"
+    when: ansible_facts.selinux.status == 'enabled'
+    tags:
+      - "SEC"
+      - "HTTPD"
+      - "BA"
+
+  - name: "Ustawianie kontekstu SELinux na {{ pub_dir }}"
+    command: restorecon -irv "{{ pub_dir }}"
     when: ansible_facts.selinux.status == 'enabled'
     tags:
       - "SEC"
